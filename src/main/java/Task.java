@@ -2,7 +2,10 @@ public class Task {
     protected String description;
     protected boolean isDone;
 
-    public Task(String description) {
+    public Task(String description) throws DukeException {
+        if (description == null || description.trim().isEmpty()) {
+            throw new DukeException("Description cannot be empty.");
+        }
         this.description = description;
         this.isDone = false;
     }
