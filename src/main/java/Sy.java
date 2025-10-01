@@ -77,6 +77,10 @@ public class Sy {
             String arg = input.substring(7).trim();
             unmark(arg);
 
+        } else if (input.startsWith("delete ")) {
+            String arg = input.substring(7).trim();
+            delete(arg);
+
         } else {
             throw new DukeException(
                     "      Typo? :/\n"
@@ -149,6 +153,23 @@ public class Sy {
             n.markUndone();
             System.out.println("___________________________");
             System.out.println("     OK, I've marked this task as not done yet:");
+            System.out.println("       " + n);
+            System.out.println("___________________________");
+        } catch (NumberFormatException e) {
+            System.out.println("Please provide a valid task number to unmark.");
+        }
+    }
+
+    private static void delete(String input) throws DukeException {
+        try {
+            int i = Integer.parseInt(input);
+            if (i < 1 || i > Tasks.size()) {
+                throw new DukeException("No such task number: " + i);
+            }
+            Task n = Tasks.get(i - 1);
+            Tasks.remove(n);
+            System.out.println("___________________________");
+            System.out.println("     Noted. I've removed this task:");
             System.out.println("       " + n);
             System.out.println("___________________________");
         } catch (NumberFormatException e) {
