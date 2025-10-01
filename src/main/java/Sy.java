@@ -14,47 +14,57 @@ public class Sy {
 
             if (input.equals("bye")) {
                 System.out.println("___________________________");
-                System.out.println("      " + "Bye!");
+                System.out.println("      " + "Bye! And don't come again!");
                 System.out.println("___________________________");
                 break;
             }
-            handle(input);
+
+            try {
+                handle(input);
+            } catch (DukeException e) {
+                System.out.println("___________________________");
+                System.out.println("      " + e.getMessage());
+                System.out.println("___________________________");
+            }
         }
     }
 
-    private static void handle(String input) {
-        if (input.isEmpty())
+    private static void handle(String input) throws DukeException {
+        if (input.isEmpty()) {
             return;
+        }
 
         if (input.startsWith("todo ")) {
             String description = input.substring(5).trim();
-            addTodo(description);
+            if (description.isEmpty()) {
+                throw new DukeException("todo what?");
+            } else {
+                addTodo(description);
+            }
 
         } else if (input.startsWith("deadline ")) {
-            // format: deadline <desc> /by <when>
             String body = input.substring(9);
             String[] parts = body.split("/by", 2);
             if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-                System.out.println("Usage: deadline <description> /by <when>");
-                return;
+                throw new DukeException("deadline for what?");
+            } else {
+                addDeadline(parts[0].trim(), parts[1].trim());
             }
-            addDeadline(parts[0].trim(), parts[1].trim());
 
         } else if (input.startsWith("event ")) {
-            // format: event <desc> /from <start> /to <end>
             String body = input.substring(6);
             String[] p1 = body.split("/from", 2);
             if (p1.length < 2 || p1[0].trim().isEmpty()) {
-                System.out.println("Usage: event <description> /from <start> /to <end>");
-                return;
+                throw new DukeException("what event?");
+            } else {
+                String desc = p1[0].trim();
+                String[] p2 = p1[1].split("/to", 2);
+                if (p2.length < 2 || p2[0].trim().isEmpty() || p2[1].trim().isEmpty()) {
+                    System.out.println("Usage: event <description> /from <start> /to <end>");
+                    return;
+                }
+                addEvent(desc, p2[0].trim(), p2[1].trim());
             }
-            String desc = p1[0].trim();
-            String[] p2 = p1[1].split("/to", 2);
-            if (p2.length < 2 || p2[0].trim().isEmpty() || p2[1].trim().isEmpty()) {
-                System.out.println("Usage: event <description> /from <start> /to <end>");
-                return;
-            }
-            addEvent(desc, p2[0].trim(), p2[1].trim());
 
         } else if (input.equals("list")) {
             list();
@@ -68,21 +78,23 @@ public class Sy {
             unmark(arg);
 
         } else {
-            System.out.println("Unknown command: " + input);
+            throw new DukeException(
+                    "      Typo? :/\n"
+                            + "      I dont think thats a command, perhaps todo, event, deadline? Or u're missing a space");
         }
     }
 
-    private static void addTodo(String description) {
+    private static void addTodo(String description) throws DukeException {
         Todo t = new Todo(description);
         addTaskAndAcknowledge(t);
     }
 
-    private static void addDeadline(String description, String by) {
+    private static void addDeadline(String description, String by) throws DukeException {
         Deadline d = new Deadline(description, by);
         addTaskAndAcknowledge(d);
     }
 
-    private static void addEvent(String description, String from, String to) {
+    private static void addEvent(String description, String from, String to) throws DukeException {
         Event e = new Event(description, from, to);
         addTaskAndAcknowledge(e);
     }
@@ -99,36 +111,39 @@ public class Sy {
     private static void list() {
         System.out.println("___________________________");
         System.out.println("     Here are the tasks in your list:");
-        for (int i = 0; i < Tasks.size(); i++) {
-            System.out.println("     " + (i + 1) + "." + Tasks.get(i));
+        if (Tasks.isEmpty()) {
+            System.out.println("     NOTHING!\n" + "     U're free... for the time being");
+        } else {
+            for (int i = 0; i < Tasks.size(); i++) {
+                System.out.println("     " + (i + 1) + "." + Tasks.get(i));
+            }
         }
         System.out.println("___________________________");
     }
 
-    private static void mark(String input) {
+    private static void mark(String input) throws DukeException {
         try {
             int i = Integer.parseInt(input);
             if (i < 1 || i > Tasks.size()) {
-                System.out.println("No such task number: " + i);
-                return;
+                throw new DukeException("No such task number: " + i);
+            } else {
+                Task n = Tasks.get(i - 1);
+                n.markDone();
+                System.out.println("___________________________");
+                System.out.println("     Nice! I've marked this task as done:");
+                System.out.println("       " + n);
+                System.out.println("___________________________");
             }
-            Task n = Tasks.get(i - 1);
-            n.markDone();
-            System.out.println("___________________________");
-            System.out.println("     Nice! I've marked this task as done:");
-            System.out.println("       " + n);
-            System.out.println("___________________________");
         } catch (NumberFormatException e) {
             System.out.println("Please provide a valid task number to mark.");
         }
     }
 
-    private static void unmark(String input) {
+    private static void unmark(String input) throws DukeException {
         try {
             int i = Integer.parseInt(input);
             if (i < 1 || i > Tasks.size()) {
-                System.out.println("No such task number: " + i);
-                return;
+                throw new DukeException("No such task number: " + i);
             }
             Task n = Tasks.get(i - 1);
             n.markUndone();

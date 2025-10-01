@@ -2,11 +2,8 @@ public class Event extends Task {
     protected String from;
     protected String to;
 
-    public Event(String description, String from, String to) throws DukeException {
+    public Event(String description, String from, String to) {
         super(description);
-        if (from == null || from.trim().isEmpty() || to == null || to.trim().isEmpty()) {
-            throw new DukeException("Event requires both /from <start> and /to <end>.");
-        }
         this.from = from;
         this.to = to;
     }
