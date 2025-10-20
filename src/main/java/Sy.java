@@ -17,6 +17,7 @@ public class Sy {
                 System.out.println("      " + "Bye! And don't come again!");
                 System.out.println("___________________________");
                 break;
+                // sc.close();
             }
 
             try {
