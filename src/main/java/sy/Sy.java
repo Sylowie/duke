@@ -1,10 +1,35 @@
+package sy;
+
 import java.util.*;
+
+import task.Deadline;
+import task.Event;
+import task.Task;
+import task.Todo;
+import util.DukeException;
+// import ui.Ui;
+import db.Db;
 
 public class Sy {
 
-    private static ArrayList<Task> Tasks = new ArrayList<>(); // dynamic
+    private final Db storage = new Db();
+    // private final Ui ui = new Ui();
+
+    private final List<Task> tasks = new ArrayList<>(); // dynamic
+
+    public Sy() throws DukeException {
+        this.tasks.addAll(storage.load()); // load on startup
+    }
 
     public static void main(String[] args) {
+        try {
+            new Sy().run();
+        } catch (DukeException e) {
+            System.out.println("Failed to start: " + e.getMessage());
+        }
+    }
+
+    private void run() {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Hello! I'm Sy\n" + "What can I do for you?\n");
@@ -16,12 +41,13 @@ public class Sy {
                 System.out.println("___________________________");
                 System.out.println("      " + "Bye! And don't come again!");
                 System.out.println("___________________________");
+                sc.close();
                 break;
-                // sc.close();
             }
 
             try {
                 handle(input);
+                storage.save(tasks);
             } catch (DukeException e) {
                 System.out.println("___________________________");
                 System.out.println("      " + e.getMessage());
@@ -30,7 +56,7 @@ public class Sy {
         }
     }
 
-    private static void handle(String input) throws DukeException {
+    private void handle(String input) throws DukeException {
         if (input.isEmpty()) {
             return;
         }
@@ -89,50 +115,50 @@ public class Sy {
         }
     }
 
-    private static void addTodo(String description) throws DukeException {
+    private void addTodo(String description) throws DukeException {
         Todo t = new Todo(description);
         addTaskAndAcknowledge(t);
     }
 
-    private static void addDeadline(String description, String by) throws DukeException {
+    private void addDeadline(String description, String by) throws DukeException {
         Deadline d = new Deadline(description, by);
         addTaskAndAcknowledge(d);
     }
 
-    private static void addEvent(String description, String from, String to) throws DukeException {
+    private void addEvent(String description, String from, String to) throws DukeException {
         Event e = new Event(description, from, to);
         addTaskAndAcknowledge(e);
     }
 
-    private static void addTaskAndAcknowledge(Task t) {
-        Tasks.add(t);
+    private void addTaskAndAcknowledge(Task t) {
+        tasks.add(t);
         System.out.println("___________________________");
         System.out.println("     Got it. I've added this task:");
         System.out.println("       " + t);
-        System.out.println("     Now you have " + Tasks.size() + " tasks in the list.");
+        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
         System.out.println("___________________________");
     }
 
-    private static void list() {
+    private void list() {
         System.out.println("___________________________");
         System.out.println("     Here are the tasks in your list:");
-        if (Tasks.isEmpty()) {
+        if (tasks.isEmpty()) {
             System.out.println("     NOTHING!\n" + "     U're free... for the time being");
         } else {
-            for (int i = 0; i < Tasks.size(); i++) {
-                System.out.println("     " + (i + 1) + "." + Tasks.get(i));
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println("     " + (i + 1) + "." + tasks.get(i));
             }
         }
         System.out.println("___________________________");
     }
 
-    private static void mark(String input) throws DukeException {
+    private void mark(String input) throws DukeException {
         try {
             int i = Integer.parseInt(input);
-            if (i < 1 || i > Tasks.size()) {
+            if (i < 1 || i > tasks.size()) {
                 throw new DukeException("No such task number: " + i);
             } else {
-                Task n = Tasks.get(i - 1);
+                Task n = tasks.get(i - 1);
                 n.markDone();
                 System.out.println("___________________________");
                 System.out.println("     Nice! I've marked this task as done:");
@@ -144,13 +170,13 @@ public class Sy {
         }
     }
 
-    private static void unmark(String input) throws DukeException {
+    private void unmark(String input) throws DukeException {
         try {
             int i = Integer.parseInt(input);
-            if (i < 1 || i > Tasks.size()) {
+            if (i < 1 || i > tasks.size()) {
                 throw new DukeException("No such task number: " + i);
             }
-            Task n = Tasks.get(i - 1);
+            Task n = tasks.get(i - 1);
             n.markUndone();
             System.out.println("___________________________");
             System.out.println("     OK, I've marked this task as not done yet:");
@@ -161,14 +187,14 @@ public class Sy {
         }
     }
 
-    private static void delete(String input) throws DukeException {
+    private void delete(String input) throws DukeException {
         try {
             int i = Integer.parseInt(input);
-            if (i < 1 || i > Tasks.size()) {
+            if (i < 1 || i > tasks.size()) {
                 throw new DukeException("No such task number: " + i);
             }
-            Task n = Tasks.get(i - 1);
-            Tasks.remove(n);
+            Task n = tasks.get(i - 1);
+            tasks.remove(n);
             System.out.println("___________________________");
             System.out.println("     Noted. I've removed this task:");
             System.out.println("       " + n);

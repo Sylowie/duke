@@ -1,3 +1,5 @@
+package task;
+
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -19,7 +21,16 @@ public class Task {
         this.isDone = false;
     }
 
+    @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isDone() {
+        return isDone;
     }
 }
