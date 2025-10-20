@@ -1,4 +1,4 @@
-package db;
+package storage;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,7 +18,7 @@ import task.Deadline;
 import task.Event;
 import util.DukeException;
 
-public class Db {
+public class Storage {
     private final Path dataDir = Paths.get("data");
     private final Path dataFile = dataDir.resolve("duke.txt");
 
@@ -91,7 +91,7 @@ public class Db {
 
     private Task deserialize(String line) {
         String[] parts = line.split("\\s*\\|\\s*");
-        if (parts.length < 3){
+        if (parts.length < 3) {
             throw new IllegalArgumentException("Not enough fields");
         }
 
