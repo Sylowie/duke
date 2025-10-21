@@ -7,10 +7,25 @@ import tasklist.TaskList;
 import ui.Ui;
 import util.DukeException;
 
+/**
+ * {@code Sy} class is the main entry point of the chatbot
+ * application.
+ * initializes core components (UI, Storage, TaskList,
+ * and Parser),
+ * running the main interaction loop, handling user input, and executing
+ * commands.
+ * 
+ * Usage: Run this class to start the chatbot:
+ * 
+ * <pre>{@code
+ *   java sy.Sy
+ * }</pre>
+ */
 public class Sy {
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
+    private Parser parser;
 
     public Sy() {
         ui = new Ui();
@@ -23,24 +38,54 @@ public class Sy {
         }
     }
 
+    /*
+     * Runs Duke
+     * This method shows a welcome message then enters a loop where it continuously
+     * reads commands from the user and executes them.
+     * If the user enters "bye" command, the loop will terminate and exit
+     * application
+     * If the user enters an invalid command or error occurs, an error message will
+     * be displayed.
+     */
     public void run() {
         ui.showWelcome();
         boolean isExit = false;
+
         while (!isExit) {
             try {
                 String fullCommand = ui.readCommand();
+                if (fullCommand == null) { // e.g., EOF / Ctrl+D
+                    ui.showGoodbye();
+                    break;
+                }
+                fullCommand = fullCommand.trim();
+                if (fullCommand.isEmpty()) { // ignore empty lines
+                    ui.showLine();
+                    continue;
+                }
+
                 ui.showLine();
-                Command c = Parser.parse(fullCommand);
-                c.execute(tasks, ui, storage);
+                Command c = Parser.parse(fullCommand); // may throw DukeException
+                c.execute(tasks, ui, storage); // may throw DukeException
                 isExit = c.isExit();
-            } catch (DukeException e) {
+
+            } catch (DukeException e) { // ✅ user/validation errors
                 ui.showError(e.getMessage());
+
+            } catch (Exception e) { // ✅ unexpected errors
+                ui.showError("Oops, something went wrong: " + e.getMessage());
+                // e.printStackTrace(); // optional for debugging
             } finally {
                 ui.showLine();
             }
         }
     }
 
+    /**
+     * Starts Duke application
+     * 
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         new Sy().run();
     }

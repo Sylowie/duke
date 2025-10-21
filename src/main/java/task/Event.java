@@ -1,25 +1,52 @@
 package task;
 
-public class Event extends Task {
-    protected String from;
-    protected String to;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import util.DateTime;
 
+public class Event extends Task {
+    private static final DateTimeFormatter RAW_SLASH_DT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+
+    private final String fromRaw; // store what user typed
+    private final String toRaw;
+
+    // User input path: keep raw
     public Event(String description, String from, String to) {
         super(description);
-        this.from = from;
-        this.to = to;
+        this.fromRaw = from.trim();
+        this.toRaw = to.trim();
     }
 
-    public String getFrom() {
-        return from;
+    // Optional path: construct from LocalDateTime but still normalize to your raw
+    // style
+    public Event(String description, LocalDateTime from, LocalDateTime to) {
+        super(description);
+        this.fromRaw = from.format(RAW_SLASH_DT);
+        this.toRaw = to.format(RAW_SLASH_DT);
     }
 
-    public String getTo() {
-        return to;
+    // Lazy parse on access
+    public LocalDateTime getFromDateTime() {
+        return DateTime.parseDateTime(fromRaw);
+    }
+
+    public LocalDateTime getToDateTime() {
+        return DateTime.parseDateTime(toRaw);
+    }
+
+    // Raw getters for Storage
+    public String getFromRaw() {
+        return fromRaw;
+    }
+
+    public String getToRaw() {
+        return toRaw;
     }
 
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
+        return "[E]" + super.toString()
+                + " (from: " + DateTime.formatRawDateTimeSafe(fromRaw)
+                + " to: " + DateTime.formatRawDateTimeSafe(toRaw) + ")";
     }
 }

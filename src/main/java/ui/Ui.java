@@ -25,7 +25,13 @@ public class Ui {
         showLine();
     }
 
+    public void showGoodbye() {
+        showLine();
+        System.out.println("      Bye! And don't come again!");
+        showLine();
+    }
+
     public void showLoadingError() {
-        showError("Could not load saved data. Starting with an empty list.");
+        showError("Couldn't load saved data. Starting with an empty list.");
     }
 }
