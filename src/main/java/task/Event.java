@@ -10,15 +10,12 @@ public class Event extends Task {
     private final String fromRaw; // store what user typed
     private final String toRaw;
 
-    // User input path: keep raw
     public Event(String description, String from, String to) {
         super(description);
         this.fromRaw = from.trim();
         this.toRaw = to.trim();
     }
 
-    // Optional path: construct from LocalDateTime but still normalize to your raw
-    // style
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
         this.fromRaw = from.format(RAW_SLASH_DT);
@@ -34,7 +31,6 @@ public class Event extends Task {
         return DateTime.parseDateTime(toRaw);
     }
 
-    // Raw getters for Storage
     public String getFromRaw() {
         return fromRaw;
     }
