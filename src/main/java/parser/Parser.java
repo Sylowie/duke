@@ -9,6 +9,7 @@ import command.ExitCommand;
 import command.ListCommand;
 import command.MarkCommand;
 import command.UnmarkCommand;
+import command.FindCommand;
 import util.DukeException;
 
 public class Parser {
@@ -67,7 +68,12 @@ public class Parser {
             return new DeleteCommand(idx);
         }
 
-        throw new DukeException("Typo? Try: todo, event, deadline, list, mark N, unmark N, delete N, bye");
+        if (s.startsWith("find ")) {
+            String desc = s.substring(5).trim();
+            return new FindCommand(desc);
+        }
+
+        throw new DukeException("Typo?");
     }
 
     private static int parseIndex(String s) throws DukeException {

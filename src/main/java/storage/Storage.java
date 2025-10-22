@@ -79,7 +79,7 @@ public class Storage {
 
         } else if (t instanceof Deadline) {
             Deadline d = (Deadline) t;
-            // write raw exactly as typed
+
             return join("D", doneFlag(t), escape(t.getDescription()), escape(d.getByRaw()));
 
         } else if (t instanceof Event) {
