@@ -16,10 +16,7 @@ import util.DukeException;
  * commands.
  * 
  * Usage: Run this class to start the chatbot:
- * 
- * <pre>{@code
- *   java sy.Sy
- * }</pre>
+ * {@code java sy.Sy}
  */
 public class Sy {
     private Storage storage;
@@ -54,12 +51,12 @@ public class Sy {
         while (!isExit) {
             try {
                 String fullCommand = ui.readCommand();
-                if (fullCommand == null) { // e.g., EOF / Ctrl+D
+                if (fullCommand == null) {
                     ui.showGoodbye();
                     break;
                 }
                 fullCommand = fullCommand.trim();
-                if (fullCommand.isEmpty()) { // ignore empty lines
+                if (fullCommand.isEmpty()) {
                     ui.showLine();
                     continue;
                 }
@@ -69,12 +66,11 @@ public class Sy {
                 c.execute(tasks, ui, storage); // may throw DukeException
                 isExit = c.isExit();
 
-            } catch (DukeException e) { // ✅ user/validation errors
+            } catch (DukeException e) {
                 ui.showError(e.getMessage());
 
             } catch (Exception e) { // ✅ unexpected errors
                 ui.showError("Oops, something went wrong: " + e.getMessage());
-                // e.printStackTrace(); // optional for debugging
             } finally {
                 ui.showLine();
             }

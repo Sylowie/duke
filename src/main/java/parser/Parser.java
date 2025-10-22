@@ -53,13 +53,13 @@ public class Parser {
         }
 
         if (s.startsWith("mark ")) {
-            int idx = parseIndex(s.substring(5).trim());
-            return new MarkCommand(idx);
+            String idxs = s.substring(5).trim();
+            return new MarkCommand(idxs);
         }
 
         if (s.startsWith("unmark ")) {
-            int idx = parseIndex(s.substring(7).trim());
-            return new UnmarkCommand(idx);
+            String idxs = s.substring(7).trim();
+            return new UnmarkCommand(idxs);
         }
 
         if (s.startsWith("delete ")) {
