@@ -18,6 +18,9 @@ public class Parser {
             throw new DukeException("Empty command.");
         }
         String s = input.trim();
+        // assert given that if statement already covers
+        assert s != null : "Trimmed input should not be null";
+        assert !s.isEmpty() : "Trimmed input should not be empty";
 
         if (s.equals("bye"))
             return new ExitCommand();
@@ -26,6 +29,7 @@ public class Parser {
 
         if (s.startsWith("todo ")) {
             String desc = s.substring(5).trim();
+            assert desc != null : "todo description should never be null";
             if (desc.isEmpty())
                 throw new DukeException("todo what?");
             return new AddTodoCommand(desc);
@@ -34,6 +38,7 @@ public class Parser {
         if (s.startsWith("deadline ")) {
             String body = s.substring(9);
             String[] parts = body.split("/by", 2);
+            assert parts != null && parts.length > 0 : "Splitting deadline must produce parts";
             if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
                 throw new DukeException("deadline for what?");
             }
@@ -43,6 +48,7 @@ public class Parser {
         if (s.startsWith("event ")) {
             String body = s.substring(6);
             String[] p1 = body.split("/from", 2);
+            assert p1 != null && p1.length > 0 : "Event split by /from should produce parts";
             if (p1.length < 2 || p1[0].trim().isEmpty())
                 throw new DukeException("what event?");
             String desc = p1[0].trim();
