@@ -17,6 +17,5 @@ public class ListCommand extends Command {
             }
         }
         ui.showLine();
-        // no save needed
     }
 }
