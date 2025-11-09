@@ -22,7 +22,6 @@ public class Sy {
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
-    private Parser parser;
 
     public Sy() {
         ui = new Ui();
@@ -35,15 +34,6 @@ public class Sy {
         }
     }
 
-    /*
-     * Runs Duke
-     * This method shows a welcome message then enters a loop where it continuously
-     * reads commands from the user and executes them.
-     * If the user enters "bye" command, the loop will terminate and exit
-     * application
-     * If the user enters an invalid command or error occurs, an error message will
-     * be displayed.
-     */
     public void run() {
         ui.showWelcome();
         boolean isExit = false;
@@ -69,7 +59,7 @@ public class Sy {
             } catch (DukeException e) {
                 ui.showError(e.getMessage());
 
-            } catch (Exception e) { // ✅ unexpected errors
+            } catch (Exception e) {
                 ui.showError("Oops, something went wrong: " + e.getMessage());
             } finally {
                 ui.showLine();

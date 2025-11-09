@@ -21,6 +21,7 @@ public class Parser {
         // assert given that if statement already covers
         assert s != null : "Trimmed input should not be null";
         assert !s.isEmpty() : "Trimmed input should not be empty";
+        s = s.toLowerCase();
 
         if (s.equals("bye"))
             return new ExitCommand();
@@ -40,7 +41,7 @@ public class Parser {
             String[] parts = body.split("/by", 2);
             assert parts != null && parts.length > 0 : "Splitting deadline must produce parts";
             if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-                throw new DukeException("deadline for what?");
+                throw new DukeException("deadline by? Usage: deadline <description> /by <date>");
             }
             return new AddDeadlineCommand(parts[0].trim(), parts[1].trim());
         }
